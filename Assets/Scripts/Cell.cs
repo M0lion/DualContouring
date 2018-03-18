@@ -68,8 +68,8 @@ public class Cell {
 			if(A!=edge.A && B != edge.B)
 				if(A!=edge.B&&A!=edge.A)
 				{
-					Debug.DrawLine((Vector3)A.p, (Vector3)B.p, new Color(0,1,0,0.4f), 30);
-					Debug.DrawLine((Vector3)edge.A.p, (Vector3)edge.B.p, new Color(1,0,0,0.4f), 30);
+					//Debug.DrawLine(A.p, B.p, new Color(0,1,0,0.4f), 30);
+					//Debug.DrawLine(edge.A.p, edge.B.p, new Color(1,0,0,0.4f), 30);
 				}
 
 			edges.Add(edge);
@@ -84,7 +84,7 @@ public class Cell {
 
 		Vector3d p = getPoint();
 		Debug.DrawRay((Vector3)p,(Vector3)surface.sampleDerivative(p.x,p.y,p.z), new Color(0,0.4f,0,0.4f));
-		//Debug.DrawLine(Vector3d.zero, p, Color.blue);
+		Debug.DrawLine((Vector3)Vector3d.zero, (Vector3)p, Color.blue);
 	}
 
 	public Vector3d getPoint()

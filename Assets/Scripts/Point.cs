@@ -24,18 +24,18 @@ public class Point {
 
 	public Edge getEdge(Point point, IIsoSurface surface, List<Edge> edges)
 	{
-		Debug.DrawLine((Vector3)p, (Vector3)point.p, new Color(0.2f,0.2f,0.2f,0.2f), 30);
+		//Debug.DrawLine((Vector3)p, (Vector3)point.p, new Color(0.2f,0.2f,0.2f,0.2f), 30);
 		foreach(Edge edge in this.edges)
 		{
 			if(edge.A == point || edge.B == point)
 			{
-				Debug.DrawLine((Vector3)p, (Vector3)point.p, new Color(1,0,0,0.4f), 30);
+				//Debug.DrawLine((Vector3)p, (Vector3)point.p, new Color(1,0,0,0.4f), 30);
 				return edge;
 			}
 		}
 
 		Edge e = Edge.GetEdge(this, point, surface, edges);
-		Debug.DrawLine((Vector3)p, (Vector3)point.p, new Color(0,0,1,0.4f), 30);
+		//Debug.DrawLine((Vector3)p, (Vector3)point.p, new Color(0,0,1,0.4f), 30);
 		return e;
 	}
 
