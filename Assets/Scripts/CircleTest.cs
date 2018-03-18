@@ -2,41 +2,75 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(MeshFilter))]
 public class CircleTest : MonoBehaviour {
+
+	MeshFilter meshFilter;
 
 	List<Edge> edges;
 	Point[,,] points;
 	Cell[,,] cells;
 
 	float cellSize = 1;
+	int size = 10;
 
 	IIsoSurface surface;
 
 	// Use this for initialization
 	void Start () {
-		surface = new CircleSurface(10,0.002f);
+
+		//surface = new CircleSurface(4.25f, new Vector3(5,5,5), 0.001f);
+		surface = new PlaneSurface();
 		
 		edges = new List<Edge>();
-		points = new Point[11,11,11];
-		cells = new Cell[10,10,10];
+		points = new Point[size + 1,size + 1,size + 1];
+		cells = new Cell[size,size,size];
 
-		for(int x = 0; x < 10; x++)
+		for(int x = 0; x < size; x++)
 		{
-			for(int y = 0; y < 10; y++)
+			for(int y = 0; y < size; y++)
 			{
-				for(int z = 0; z < 10; z++)
+				for(int z = 0; z < size; z++)
 				{
 					cells[x,y,z] = new Cell(x,y,z,cellSize, points, edges, surface);
 				}	
 			}
 		}
+
+		meshFilter = GetComponent<MeshFilter>();
+
+		Mesh mesh = new Mesh();
+		
+		List<Vector3> vertices = new List<Vector3>();
+		List<Vector3> normals = new List<Vector3>();
+		List<int> triangles = new List<int>();
+
+		foreach(Edge edge in edges)
+		{
+			int i = edge.Draw(vertices, normals, triangles, surface);
+			Debug.Log("I: " + i);
+		}
+
+		mesh.vertices = vertices.ToArray();
+		mesh.normals = normals.ToArray();
+		mesh.triangles = triangles.ToArray();
+
+		meshFilter.mesh = mesh;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		foreach(Point point in points)
+		{
+			point.DebugDraw();
+		}
+		foreach(Cell cell in cells)
+		{
+			cell.DebugDraw(surface);
+		}
 		foreach(Edge edge in edges)
 		{
-			edge.DebugDraw();
+			edge.DebugDraw(cellSize);
 		}
 	}
 }
