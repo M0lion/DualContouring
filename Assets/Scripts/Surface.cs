@@ -1,23 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class Surface : IIsoSurface
 {
-	float pos;
+	double pos;
 
-	public Surface(float pos)
+	public Surface(double pos)
 	{
 		this.pos = pos;
 	}
 
-    public float sample(float x, float y, float z)
+    public double sample(double x, double y, double z)
     {
-        return y - pos - Mathf.Sin(x) - Mathf.Sin(z);
+        return y - pos - Math.Sin(x) - Math.Sin(z);
     }
 
-    public Vector3 sampleDerivative(float x, float y, float z)
+    public Vector3d sampleDerivative(double x, double y, double z)
     {
-        return new Vector3(-Mathf.Cos(x),1,-Mathf.Cos(z));
+        return new Vector3d(-Math.Cos(x),1,-Math.Cos(z));
     }
 }
