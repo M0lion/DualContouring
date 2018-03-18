@@ -7,9 +7,9 @@ public class Cell {
 	List<Edge> edges;
 
 	bool dirty = true;
-	Vector3 point;
+	Vector3d point;
 
-	public Cell(int x, int y, int z, float cellSize, Point[,,] points, List<Edge> edges, IIsoSurface surface)
+	public Cell(int x, int y, int z, double cellSize, Point[,,] points, List<Edge> edges, IIsoSurface surface)
 	{
 		this.edges = new List<Edge>();
 		this.points = new Point[2,2,2];
@@ -24,7 +24,7 @@ public class Cell {
 			}	
 		}
 
-		point = new Vector3(x + 0.5f,y + 0.5f,z + 0.5f);
+		point = new Vector3d(x + 0.5f,y + 0.5f,z + 0.5f);
 
 		addEdge(this.points[0,0,0], this.points[1,0,0], surface, edges);
 		addEdge(this.points[0,0,0], this.points[0,1,0], surface, edges);
@@ -46,10 +46,10 @@ public class Cell {
 		addEdge(this.points[1,1,0], this.points[1,1,1], surface, edges);
 	}
 
-	Point getPoint(int x, int y, int z, float cellSize, Point[,,] points, IIsoSurface surface){
+	Point getPoint(int x, int y, int z, double cellSize, Point[,,] points, IIsoSurface surface){
 		Point point = points[x,y,z];
 		if(point == null){
-			Vector3 p = new Vector3(x * (float)cellSize,y * (float)cellSize,z * (float)cellSize);
+			Vector3d p = new Vector3d(x * (double)cellSize,y * (double)cellSize,z * (double)cellSize);
 			point = new Point(surface.sample(p.x,p.y,p.z), p, x, y, z);
 			points[x,y,z] = point;
 		}
@@ -68,8 +68,8 @@ public class Cell {
 			if(A!=edge.A && B != edge.B)
 				if(A!=edge.B&&A!=edge.A)
 				{
-					Debug.DrawLine(A.p, B.p, new Color(0,1,0,0.4f), 30);
-					Debug.DrawLine(edge.A.p, edge.B.p, new Color(1,0,0,0.4f), 30);
+					Debug.DrawLine((Vector3)A.p, (Vector3)B.p, new Color(0,1,0,0.4f), 30);
+					Debug.DrawLine((Vector3)edge.A.p, (Vector3)edge.B.p, new Color(1,0,0,0.4f), 30);
 				}
 
 			edges.Add(edge);
@@ -82,19 +82,19 @@ public class Cell {
 	{
 		if(this.edges.Count < 1) return;
 
-		Vector3 p = getPoint();
-		Debug.DrawRay(p,surface.sampleDerivative(p.x,p.y,p.z), new Color(0,0.4f,0,0.4f));
-		//Debug.DrawLine(Vector3.zero, p, Color.blue);
+		Vector3d p = getPoint();
+		Debug.DrawRay((Vector3)p,(Vector3)surface.sampleDerivative(p.x,p.y,p.z), new Color(0,0.4f,0,0.4f));
+		//Debug.DrawLine(Vector3d.zero, p, Color.blue);
 	}
 
-	public Vector3 getPoint()
+	public Vector3d getPoint()
 	{
 		if(dirty)
 		{
 			dirty = false;
 
-			List<Vector3> p = new List<Vector3>();
-			List<Vector3> n = new List<Vector3>();
+			List<Vector3d> p = new List<Vector3d>();
+			List<Vector3d> n = new List<Vector3d>();
 
 			foreach(Edge edge in edges)
 			{
