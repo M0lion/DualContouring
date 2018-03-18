@@ -11,16 +11,17 @@ public class CircleTest : MonoBehaviour {
 	Point[,,] points;
 	Cell[,,] cells;
 
-	float cellSize = 1;
-	int size = 10;
+	public float cellSize = 1f;
+	public int size = 10;
+	public bool debug;
 
 	IIsoSurface surface;
 
 	// Use this for initialization
 	void Start () {
 
-		//surface = new CircleSurface(4.25f, new Vector3(5,5,5), 0.001f);
-		surface = new PlaneSurface();
+		//surface = new CircleSurface(4.25f, new Vector3(5,5,5), 0.0001f);
+		surface = new Surface(5.4f);
 		
 		edges = new List<Edge>();
 		points = new Point[size + 1,size + 1,size + 1];
@@ -28,7 +29,7 @@ public class CircleTest : MonoBehaviour {
 
 		for(int x = 0; x < size; x++)
 		{
-			for(int y = 0; y < size; y++)
+			for(int y = 0; y < 10; y++)
 			{
 				for(int z = 0; z < size; z++)
 				{
@@ -60,17 +61,20 @@ public class CircleTest : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		foreach(Point point in points)
+		if(debug)
 		{
-			point.DebugDraw();
-		}
-		foreach(Cell cell in cells)
-		{
-			cell.DebugDraw(surface);
-		}
-		foreach(Edge edge in edges)
-		{
-			edge.DebugDraw(cellSize);
+			foreach(Point point in points)
+			{
+				point.DebugDraw();
+			}
+			foreach(Cell cell in cells)
+			{
+				cell.DebugDraw(surface);
+			}
+			foreach(Edge edge in edges)
+			{
+				edge.DebugDraw(cellSize);
+			}
 		}
 	}
 }

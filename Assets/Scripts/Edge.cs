@@ -39,7 +39,7 @@ public class Edge {
 		}
 
 		Vector3 n = surface.sampleDerivative(p.x,p.y,p.z);
-		Debug.DrawLine(A.p, B.p, new Color(0,0,1,0.5f), 30);
+		//Debug.DrawLine(A.p, B.p, new Color(0,0,1,0.5f), 30);
 		return new Edge(p,n,A,B,edges);
 	}
 
@@ -70,6 +70,8 @@ public class Edge {
 
 	public int Draw(List<Vector3> vertices, List<Vector3> normals, List<int> triangles, IIsoSurface surface)
 	{
+		if(this.cells.Count < 4) return 0;
+
 		int start = vertices.Count;
 
 		int i = 0;
@@ -85,21 +87,26 @@ public class Edge {
 
 		tris.Add(start);
 		tris.Add(start + 1);
+		tris.Add(start + 2);
+
+		tris.Add(start + 1);
 		tris.Add(start + 3);
+		tris.Add(start + 2);
 		
-		if(A.iso < 0)
+		/*for(int j = 0; j < tris.Count; j++)
 		{
-			for(int j = 0; j < tris.Count; j++)
-			{
-				triangles.Add(tris[j]);
-			}
+			triangles.Add(tris[j]);
+		}*/
+
+		Vector3 diff = B.p - A.p;
+
+		for(int j = 0; j < tris.Count; j++)
+		{
+			triangles.Add(tris[j]);
 		}
-		else
+		for(int j = tris.Count - 1; j > -1; j--)
 		{
-			for(int j = tris.Count - 1; j > -1; j--)
-			{
-				triangles.Add(tris[j]);
-			}
+			triangles.Add(tris[j]);
 		}
 
 		/*triangles.Add(start + 2);

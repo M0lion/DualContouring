@@ -68,8 +68,8 @@ public class Cell {
 			if(A!=edge.A && B != edge.B)
 				if(A!=edge.B&&A!=edge.A)
 				{
-					Debug.DrawLine(A.p, B.p, new Color(0,1,0,0.4f), 30);
-					Debug.DrawLine(edge.A.p, edge.B.p, new Color(1,0,0,0.4f), 30);
+					//Debug.DrawLine(A.p, B.p, new Color(0,1,0,0.4f), 30);
+					//Debug.DrawLine(edge.A.p, edge.B.p, new Color(1,0,0,0.4f), 30);
 				}
 
 			edges.Add(edge);
