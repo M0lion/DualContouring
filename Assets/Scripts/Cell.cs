@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Double;
+
 public class Cell {
 	Point[,,] points;
 	List<Edge> edges;
 
 	bool dirty = true;
 	Vector3d point;
+
+	QEF qef = null;
 
 	public Cell(int x, int y, int z, double cellSize, Point[,,] points, List<Edge> edges, IIsoSurface surface)
 	{
@@ -93,16 +98,20 @@ public class Cell {
 		{
 			dirty = false;
 
-			List<Vector3d> p = new List<Vector3d>();
-			List<Vector3d> n = new List<Vector3d>();
+			List<Vector<double>> p = new List<Vector<double>>();
+			List<Vector<double>> n = new List<Vector<double>>();
 
 			foreach(Edge edge in edges)
 			{
-				p.Add(edge.p);
-				n.Add(edge.n);
+				p.Add(Vector<double>.Build.Dense(3, (i) => edge.p[i]));
+				n.Add(Vector<double>.Build.Dense(3, (i) => edge.n[i]));
 			}
 
-			point = QEFSolver.minimize(p.ToArray(),n.ToArray(),point,50,0.02f);
+			qef = new QEF(p,n);
+
+			point = new Vector3d((float)qef.solution[0], (float)qef.solution[1], (float)qef.solution[2]);
+
+			Debug.Log(qef.error);
 		}
 
 		return point;

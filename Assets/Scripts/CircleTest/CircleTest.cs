@@ -4,6 +4,8 @@ using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
 public class CircleTest : MonoBehaviour {
+	
+	public int i = 0;
 
 	MeshFilter meshFilter;
 
@@ -18,7 +20,7 @@ public class CircleTest : MonoBehaviour {
 	IIsoSurface surface;
 
 	// Use this for initialization
-	void Start () {
+	public void start () {
 
 		//surface = new CircleSurface(4.25f, new Vector3(5,5,5), 0.0001f);
 		surface = new Surface(5.4f);
@@ -49,7 +51,7 @@ public class CircleTest : MonoBehaviour {
 		foreach(Edge edge in edges)
 		{
 			int i = edge.Draw(vertices, normals, triangles, surface);
-			Debug.Log("I: " + i);
+			//Debug.Log("I: " + i);
 		}
 
 		mesh.vertices = vertices.ToArray();
@@ -61,19 +63,23 @@ public class CircleTest : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if(i == 5) start();
+
+		i++;
+
 		if(debug)
 		{
 			foreach(Point point in points)
 			{
-				point.DebugDraw();
+				if(point != null) point.DebugDraw();
 			}
 			foreach(Cell cell in cells)
 			{
-				cell.DebugDraw(surface);
+				if(cell != null) cell.DebugDraw(surface);
 			}
 			foreach(Edge edge in edges)
 			{
-				edge.DebugDraw(cellSize);
+				if(edge != null) edge.DebugDraw(cellSize);
 			}
 		}
 	}
