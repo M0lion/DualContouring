@@ -89,7 +89,7 @@ public class Cell {
 
 		Vector3d p = getPoint();
 		Debug.DrawRay((Vector3)p,(Vector3)surface.sampleDerivative(p.x,p.y,p.z), new Color(0,0.4f,0,0.4f));
-		Debug.DrawLine((Vector3)Vector3d.zero, (Vector3)p, Color.blue);
+		//Debug.DrawLine((Vector3)Vector3d.zero, (Vector3)p, Color.blue);
 	}
 
 	public Vector3d getPoint()

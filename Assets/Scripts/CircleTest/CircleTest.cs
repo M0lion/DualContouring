@@ -23,7 +23,7 @@ public class CircleTest : MonoBehaviour {
 	public void start () {
 
 		//surface = new CircleSurface(4.25f, new Vector3(5,5,5), 0.0001f);
-		surface = new Surface(5.4f);
+		surface = new CircleSurface(2, new Vector3d(0.5,0.5,0.5), 0.0001f);
 		
 		edges = new List<Edge>();
 		points = new Point[size + 1,size + 1,size + 1];
@@ -31,7 +31,7 @@ public class CircleTest : MonoBehaviour {
 
 		for(int x = 0; x < size; x++)
 		{
-			for(int y = 0; y < 10; y++)
+			for(int y = 0; y < size; y++)
 			{
 				for(int z = 0; z < size; z++)
 				{

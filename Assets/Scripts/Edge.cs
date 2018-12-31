@@ -61,7 +61,7 @@ public class Edge {
 	public void DebugDraw(double cellSize)
 	{
 		Debug.DrawLine((Vector3)A.p, (Vector3)B.p, new Color(0,0,0,0.5f));
-		Debug.DrawRay((Vector3)p,(Vector3)n,Color.red);
+		Debug.DrawRay((Vector3)p,(Vector3)n / 10,Color.red);
 	}
 
 	public void addCell(Cell cell)
@@ -94,12 +94,12 @@ public class Edge {
 		tris.Add(start + 3);
 		tris.Add(start + 2);
 		
-		/*for(int j = 0; j < tris.Count; j++)
+		for(int j = 0; j < tris.Count; j++)
 		{
 			triangles.Add(tris[j]);
-		}*/
+		}
 
-		Vector3d diff = B.p - A.p;
+		/* Vector3d diff = B.p - A.p;
 
 		for(int j = 0; j < tris.Count; j++)
 		{
@@ -108,7 +108,7 @@ public class Edge {
 		for(int j = tris.Count - 1; j > -1; j--)
 		{
 			triangles.Add(tris[j]);
-		}
+		} */
 
 		return i;
 	}
