@@ -1,22 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Double;
 
 public class CircleSurface : IsoSurface {
 	double radius;
-	Vector3d pos;
+	Vector<double> pos;
 
-	public CircleSurface(double r, Vector3d pos, double delta)
+	public CircleSurface(double r, Vector<double> pos, double delta)
 	{
 		radius = r;
 		this.delta = delta;
 		this.pos = pos;
 	}
 
-	public override double sample(double x, double y, double z)
-	{
-		Vector3d vec = new Vector3d(x,y,z);
-		
-		return (vec - pos).magnitude - radius;
+	public override double sample(Vector<double> pos)
+	{		
+		return (pos - this.pos).L2Norm() - radius;
 	}
 }

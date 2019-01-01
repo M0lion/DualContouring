@@ -4,10 +4,6 @@ using UnityEngine;
 
 public class CellTest : MonoBehaviour {
 
-	Cell cell;
-
-	List<Edge> edges;
-
 	// Use this for initialization
 	void Start () {
 	}

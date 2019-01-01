@@ -1,16 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Double;
 
 public class PlaneSurface : IIsoSurface
 {
-    public double sample(double x, double y, double z)
+    public double sample(Vector<double> pos)
     {
-        return (x + y + z) - 12.5f;
+        return (pos[0] + pos[1] + pos[2]) - 12.5f;
     }
 
-    public Vector3d sampleDerivative(double x, double y, double z)
+    public Vector<double> sampleDerivative(Vector<double> pos)
     {
-		return new Vector3d(1,1,1);
+		return Vector<double>.Build.DenseOfArray(new double[] {1,1,1});
     }
 }

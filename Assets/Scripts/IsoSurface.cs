@@ -1,24 +1,28 @@
-﻿using UnityEngine;
+﻿using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Double;
 
 public  interface IIsoSurface
 {
-	double sample(double x, double y, double z);
-	Vector3d sampleDerivative(double x, double y, double z);
+	double sample(Vector<double> pos);
+	Vector<double> sampleDerivative(Vector<double> pos);
 }
 
 public abstract class IsoSurface : IIsoSurface
 {
-	abstract public double sample(double x, double y, double z);
+	abstract public double sample(Vector<double> pos);
 
 	protected double delta;
 
-	public Vector3d sampleDerivative(double x, double y, double z) 
-	{
-		double ddelta = delta / 2;
-		double xx = sample(x + ddelta,y,z) - sample(x - ddelta, y,z);
-		double yy = sample(x,y + ddelta,z) - sample(x, y - ddelta,z);
-		double zz = sample(x,y,z + ddelta) - sample(x, y,z - ddelta);
+	public Vector<double> sampleDerivative(Vector<double> pos) 
+	{		
+		Vector<double> result = Vector<double>.Build.Dense(pos.Count);
 
-		return new Vector3d(xx,yy,zz)/delta;
+		for(var i = 0; i < pos.Count; i++) {
+			var d = Vector<double>.Build.Dense(pos.Count, 0);
+			d[i] = delta / 2;
+			result[i] = sample(pos + d) - sample(pos - d);
+		}
+
+		return result / delta;
 	}
 }
