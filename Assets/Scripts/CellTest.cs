@@ -11,15 +11,68 @@ public class CellTest : MonoBehaviour {
 
 	public int maxLevel = 5;
 	public double size = 5;
+	IsoSurface surface;
 
 	void Start () {
 		var cellPos = Vector<double>.Build.DenseOfArray(new double [] {0,0,0});
 		var circlePos = Vector<double>.Build.DenseOfArray(new double [] {2.5,2.5,2.5});
-		var surface = new CircleSurface(2.4, circlePos, 0.01);
+		surface = new CircleSurface(2.4, circlePos, 0.01);
 		cell = Cell.Create(cellPos, size, surface, maxLevel);
+		cell.EnumerateEdges((Cell[] edge, int dimensionMap) => {
+			var a = edge[0].pointIndexToWorldPos(dimensionMap);
+			var b = edge[0].pointIndexToWorldPos((int)Math.Pow(2,3) - 1);
+
+			var point = getEdgePoint(a,b,edge[0].getPoint(dimensionMap),edge[0].getPoint((int)Math.Pow(2,3) - 1));
+			var n = surface.sampleDerivative(point);
+
+			Debug.DrawRay(MakeUnityVector.GetVector(point), MakeUnityVector.GetVector(n), Color.red, 1000);
+			Debug.DrawLine(MakeUnityVector.GetVector(a),MakeUnityVector.GetVector(b), Color.white, 1000);
+
+			foreach(Cell cell in edge) {
+				//cell.addEdge(point, n);
+			}
+		});
+		/* cell.ForEach((Cell Cell) => {
+			cell.SolveQEF();
+		}); */
+		/* cell.EnumerateEdges((Cell[] edge, int dimensionMap) => {
+			for(int i = 0; i < edge.Length; i++) {
+				var a = edge[i].Point;
+				var b = edge[(i + 1)%4].Point;
+
+				if(a == null || b == null) continue;
+
+				var A = MakeUnityVector.GetVector(a);
+				var B = MakeUnityVector.GetVector(b);
+
+				//Debug.DrawLine(A, B, Color.black, 1000);
+			}
+		}); */
 	}
 
 	void Update () {
+		//DrawCells();
+	}
+
+	Vector<double> getEdgePoint(Vector<double> a, Vector<double> b, double valA, double valB) {
+		double sample;
+		Vector<double> point;
+		do {
+			point = (a + b) / 2.0;
+			sample = surface.sample(point);
+			if(Math.Sign(sample) == Math.Sign(valA)) {
+				a = point;
+				valA = sample;
+			} else {
+				b = point;
+				valB = sample;
+			}
+		} while(sample < 0.02);
+
+		return point;
+	}
+
+	void DrawCells() {
 		cell.ForEach(cell => {
 			var color = cell.level / (float)maxLevel;
 			var Color = new Color(1 - color,1 - color,1 - color, color);

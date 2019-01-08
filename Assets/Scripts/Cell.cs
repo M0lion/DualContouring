@@ -1,27 +1,62 @@
+using System;
+using System.Collections.Generic;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Double;
-using System;
+
 
 delegate void CellHandler(Cell cell);
+delegate void EdgeHandler(Cell [] edge, int dimensionMap);
 
 class Cell {
-    double [] points;
     double originalSize;
-    public int level;
-
     double size;
-
+    public int level;
+    int maxLevel;
     Vector<double> pos;
-
     Cell parent;
     Cell [] children;
+    double [] points;
 
     bool signed = false;
+
+
+    QEF qef;
+    public Vector<double> Point {
+        get {
+            if(qef == null && P != null) SolveQEF();
+            if(qef == null) return null;
+            return qef.solution;
+        }
+    }
+    List<Vector<double>> P;
+    List<Vector<double>> N;
+
+    public void addEdge(Vector<double> p, Vector<double> n) {
+        if(P == null) {
+            P = new List<Vector<double>>();
+            N = new List<Vector<double>>();
+        }
+
+        P.Add(p);
+        N.Add(n);
+    }
+
 
     public int Dimensions { 
         get{
             return pos.Count;
         }
+    }
+
+    public void SolveQEF() {
+        if(P == null) return;
+
+        if(P.Count < 4) {
+            qef = null;
+            return;
+        }
+
+        qef = new QEF(P,N);
     }
 
     public static Cell Create(Vector<double> pos, double size, IsoSurface surface, int maxLevel) {
@@ -31,6 +66,7 @@ class Cell {
     Cell(double originalSize, int level, int maxLevel, Vector<double> pos, IsoSurface surface, Cell parent) {
         this.originalSize = originalSize;
         this.level = level;
+        this.maxLevel = maxLevel;
         this.pos = pos;
         this.parent = parent;
 
@@ -65,12 +101,61 @@ class Cell {
         }
 
         if(level == maxLevel) {
-            // MAX LEVEL
         } else {
             children = new Cell[points.Length];
             for(int i = 0; i < children.Length; i++) {
                 var vector = posToVector(pointIndexToPos(i)) * 0.5;
                 children[i] = new Cell(originalSize, level + 1, maxLevel, pos + vector, surface, this);
+            }
+        }
+    }
+
+    public void EnumerateEdges(EdgeHandler handler) {
+        proc(new Cell[]{this}, 0, handler, 1);
+    }
+
+    void proc(Cell[] cells, int dimensionMap, EdgeHandler handler, int level) {
+        foreach(Cell cell in cells){
+            if(!cell.signed) return;
+        }
+
+        if(cells.Length == children.Length / 2) {//only edges
+            if(level == maxLevel) handler(cells, dimensionMap);
+        }
+
+        foreach(Cell cell in cells) {
+            if(cell.children == null) return;
+        }
+
+        //get "block"
+        Cell[] block = new Cell[children.Length];
+        for(int i = 0; i < block.Length; i++) {
+            var cellToPickFrom = i & dimensionMap;
+            var cellToPick = i ^ dimensionMap;
+            
+            int actualCellToPickFrom = BitHelper.ReduceDims(cellToPickFrom, dimensionMap, Dimensions);
+
+            block[i] = cells[actualCellToPickFrom].children[cellToPick];
+        }
+
+        for(int dimMap = 0; dimMap < children.Length - 1; dimMap++) {
+            if((dimMap & dimensionMap) != dimensionMap) continue;
+
+            int activeDimensions = 0;
+            for(int i = 0; i < Dimensions; i++) {
+                if(BitHelper.Get(dimMap, i)) {
+                    activeDimensions++;
+                }
+            }
+
+            for(int i = 0; i < children.Length; i++) {
+                if((dimMap & i) > 0) continue;
+                Cell[] pickedCells = new Cell[(int)Math.Pow(2,activeDimensions)];
+                for(int j = 0; j < children.Length; j++) {
+                    if((~dimMap & j) > 0) continue;
+                    pickedCells[BitHelper.ReduceDims(j,dimMap,Dimensions)] = block[i | j];
+                }
+                proc(pickedCells, dimMap, handler, level + 1);
             }
         }
     }
@@ -130,6 +215,10 @@ class Cell {
 
     public double getPoint(bool [] pos) {
         return points[getPointIndex(pos)];
+    }
+
+    public double getPoint(int i) {
+        return points[i];
     }
 
     void setPoint(bool [] pos, double val) {
